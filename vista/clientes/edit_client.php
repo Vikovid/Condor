@@ -1,42 +1,47 @@
 <?php
-  $page_title = 'Editar cliente';
-  require_once('../../modelo/load.php');
-  // Checkin What level user has permission to view this page
-  page_require_level(2);
+   $page_title = 'Editar cliente';
+   require_once('../../modelo/load.php');
 
-  $idcreden= $_GET['IdCredencial'];
+   // Checkin What level user has permission to view this page
+   page_require_level(2);
 
-  if(isset($_GET['IdCredencial']))
-     $cliente = buscaRegistroPorCampo("cliente","idcredencial",$idcreden);
+   $idcreden = $_GET['IdCredencial'];
 
-  $listaAux = $cliente['lista'];
+   if(isset($_GET['IdCredencial']))
+      $cliente = buscaRegistroPorCampo("cliente","idcredencial",$idcreden);
+
+   $listaAux = $cliente['lista'];
   
-  if(isset($_POST['nombre'])) {
-     $idcreden= $_GET['IdCredencial'];
-     $name = $_POST['nombre'];
-     $direc = $_POST['direccion'];
-     $telcliente= $_POST['telefono'];
-     $email = $_POST['email'];
-     $idcre = $_POST['credencial'];
-     $alias = $_POST['alias'];
-     $lista = $_POST['lista'];
-     $password = $_POST['password'];
+   if(isset($_POST['nombre'])) {
+      
+      $idcreden = $_GET['IdCredencial'];
+      
+      $telcliente = $_POST['telefono'];
+      $password =   $_POST['password'];
+      $direc =      $_POST['direccion'];
+      $idcre =      $_POST['credencial'];
+      $email =      $_POST['email'];
+      $alias =      $_POST['alias'];
+      $lista =      $_POST['lista'];
+      $name =       $_POST['nombre'];
 
-     if ($password != "")
-        $password = sha1($password);
+      if ($password != "")
+         $password = sha1($password);
 
-     $resultado = actCliente($name,$direc,$telcliente,$email,$idcreden,$alias,$lista,$password);
+      $resultado = actCliente($name,$direc,$telcliente,$email,$idcreden,$alias,$lista,$password);
 
-     if($resultado){
-        $session->msg('s',"Cliente ha sido actualizado.");
-        redirect('cliente.php?IdCredencial='.(int)$idcreden, false);
-     }else{
-        $session->msg('d','Lo siento no se actualizaron los datos.');
-        redirect('edit_client.php?IdCredencial='.(int)$idcreden, false);
-     }
-  }
+      if($resultado){
+         $session->msg('s',"Cliente ha sido actualizado.");
+         redirect('cliente.php?IdCredencial='.(int)$idcreden, false);
+      } else {
+         $session->msg('d','Lo siento no se actualizaron los datos.');
+         redirect('edit_client.php?IdCredencial='.(int)$idcreden, false);
+      }
+   }
 ?>
+
 <?php include_once('../layouts/header.php'); ?>
+
 <script type="text/javascript" src="../../libs/js/general.js"></script>
 
 <!DOCTYPE html>
@@ -132,4 +137,5 @@
    </div>
 </div>
 </body>
+
 <?php include_once('../layouts/footer.php'); ?>
