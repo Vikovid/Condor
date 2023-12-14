@@ -116,4 +116,15 @@ function current_url() {
       $_SERVER['REQUEST_URI'];
    return $url;
 }
+function esPDF($data) {
+   $primeros_bytes = substr($data, 0, 4);
+   return $primeros_bytes ===  '%PDF';
+}
+function esImagen($data) {
+   $primeros_bytes =    substr($data, 0, 4);
+   $formatos_imagen =   ['ffd8ffe0', 'ffd8ffe1', '89504e47', '47494638', '25504446'];
+   $primeros_bytes_hex = bin2hex($primeros_bytes);
+    
+   return in_array($primeros_bytes_hex, $formatos_imagen);
+}
 ?>

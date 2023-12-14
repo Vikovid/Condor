@@ -2632,4 +2632,79 @@ function buscaPorIVA($producto, $fechaIni, $fechaFin, $iva) {
 
    return $db->query($sql);
 }
+function incidenciaSinAtender(){
+   global $db;
+
+   $sql = " SELECT i.id, i.nomEmpresa, i.usuario, i.fecha, i.hora, e.estatus ";
+   $sql.= " FROM incidencias i LEFT JOIN estatus e on e.idEstatus = i.idEstatus ";
+   $sql.= " WHERE i.idEstatus <> '3' AND i.idEstatus <> '4' ";
+   $sql.= " ORDER BY i.id ASC ";
+
+   return find_by_sql($sql);
+}
+function detallesIncidencia($idIncidencia){
+   global $db;
+
+   $sql = " SELECT i.nomEmpresa, i.usuario, i.fecha, i.hora, i.detalles, i.respuesta, ";
+   $sql.= " i.representante, i.fechaRes, i.horaRes, i.evidencias, e.estatus, e.idEstatus ";
+   $sql.= " FROM incidencias i LEFT JOIN estatus e on e.idEstatus = i.idEstatus ";
+   $sql.= " WHERE id = '{$idIncidencia}' LIMIT 1";
+
+   $query = $db->query($sql);
+
+   if($result = $db->fetch_assoc($query))
+      return $result;
+   else
+      return null;
+
+   return find_by_sql($sql);
+}
+function respuestaIncidencia($idIncidencia, $idEstatus, $respuesta, $representante, $fechaRes, $horaRes){
+   global $db;
+
+   $sql = "UPDATE incidencias SET idEstatus = '{$idEstatus}', ";
+   $sql .= "respuesta = '{$respuesta}', representante = '{$representante}', ";
+   $sql .= "fechaRes = '{$fechaRes}', horaRes = '{$horaRes}' ";
+   $sql .= "WHERE id = '{$idIncidencia}' ";
+
+   $result = $db->query($sql);
+
+   return ($result && $db->affected_rows() === 1) ? true : false;
+}
+
+function historicoIncidencias($nomEmpresa,$usuario,$fechaIni,$fechaFin,$idEstatus){
+   global $db;
+
+   $sql = " SELECT i.id,i.nomEmpresa,i.usuario,i.fechaRes,i.horaRes,e.estatus ";
+   $sql.= " FROM incidencias i LEFT JOIN estatus e ON i.idEstatus = e.idEstatus ";
+   $sql.= " WHERE ";
+
+   if ($idEstatus != '')
+      $sql.= " e.idEstatus = '{$idEstatus}' AND ";
+   else
+      $sql.= " (e.idEstatus = '3' OR e.idEstatus = '4') AND ";
+
+   $sql.= " i.fechaRes BETWEEN '{$fechaIni}'  AND '{$fechaFin}' ";
+   $sql.= " AND i.nomEmpresa LIKE '%{$nomEmpresa}%' ";
+   $sql.= " AND i.usuario LIKE '%{$usuario}%' ";
+
+   return find_by_sql($sql);
+}
+function detallesHistoricoIncidencia($idIncidencia){
+   global $db;
+
+   $sql = " SELECT i.id,i.usuario,i.fecha,i.hora,i.idEmpresa,i.nomEmpresa,i.detalles, ";
+   $sql.= " i.evidencias,i.idEstatus,e.estatus,i.respuesta,i.representante,i.fechaRes, ";
+   $sql.= " i.horaRes FROM incidencias i ";
+   $sql.= " LEFT JOIN estatus e on e.idEstatus = i.idEstatus ";
+   $sql.= " WHERE i.id = '{$idIncidencia}' AND ";
+   $sql.= " (i.idEstatus = '3' OR i.idEstatus = '4') ";
+
+   $query = $db->query($sql);
+
+   if($result = $db->fetch_assoc($query))
+      return $result;
+   else
+      return null;
+}
 ?>
